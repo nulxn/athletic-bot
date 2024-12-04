@@ -12,10 +12,8 @@ import {
   EmbedBuilder,
 } from "discord.js";
 
-/*
-import { initDb } from "./db_test";
-initDb();
-*/
+import { init } from "./db";
+init();
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -117,11 +115,5 @@ client.once(Events.ClientReady, () => {
     guilds.push(guild);
   });
 });
-
-/*
-setInterval(() => {
-  const randomGuild = guilds[Math.floor(Math.random() * guilds.length)];
-}, 5000);
-*/
 
 client.login(process.env.TOKEN);
