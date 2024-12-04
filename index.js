@@ -12,6 +12,11 @@ import {
   EmbedBuilder,
 } from "discord.js";
 
+/*
+import { initDb } from "./db_test";
+initDb();
+*/
+
 import dotenv from "dotenv";
 dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
