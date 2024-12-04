@@ -104,8 +104,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-client.once(Events.ClientReady, (readyClient) => {
-  console.log(`\nLogged in as ${readyClient.user.tag}`);
+let guilds = [];
+client.once(Events.ClientReady, () => {
+  console.log(`\nLogged in as ${client.user.tag}`);
+  client.guilds.cache.forEach((guild) => {
+    console.log(`- ${guild.name}`);
+    guilds.push(guild);
+  });
 });
+
+/*
+setInterval(() => {
+  const randomGuild = guilds[Math.floor(Math.random() * guilds.length)];
+}, 5000);
+*/
 
 client.login(process.env.TOKEN);
