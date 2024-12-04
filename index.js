@@ -12,7 +12,7 @@ import {
   EmbedBuilder,
 } from "discord.js";
 
-import { init } from "./db";
+import { init } from "./db.js";
 init();
 
 import dotenv from "dotenv";
