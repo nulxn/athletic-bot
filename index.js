@@ -10,6 +10,7 @@ import {
   GatewayIntentBits,
   SlashCommandBuilder,
   EmbedBuilder,
+  ActivityType,
 } from "discord.js";
 
 import { init } from "./db.js";
@@ -107,12 +108,28 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
+import express from "express";
+const app = express();
 let guilds = [];
-client.once(Events.ClientReady, () => {
+
+client.once(Events.ClientReady, (readyUser) => {
   console.log(`\nLogged in as ${client.user.tag}`);
   client.guilds.cache.forEach((guild) => {
     console.log(`- ${guild.name}`);
     guilds.push(guild);
+  });
+
+  readyUser.user.setPresence({
+    activities: [{ name: "/help", type: ActivityType.Listening }],
+    status: "dnd",
+  });
+
+  const sitePath = path.join(__dirname, "site");
+  app.use(express.static(sitePath));
+
+  const PORT = 3000;
+  app.listen(PORT, () => {
+    console.log(`\nServer running at http://localhost:${PORT}`);
   });
 });
 

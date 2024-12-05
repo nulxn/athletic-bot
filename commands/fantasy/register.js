@@ -21,7 +21,9 @@ export default {
     const userExists = await getUserById(user.id);
 
     if (userExists) {
-      await interaction.reply(JSON.stringify(userExists));
+      await interaction.reply(
+        `You are already registered as ${userExists.name}.`
+      );
     } else {
       await createUser(user.id, athleticid, name);
       await interaction.reply("You have been registered successfully.");

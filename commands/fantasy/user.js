@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { getUserWithAthletes } from "../../db.js";
 
 export default {
@@ -17,7 +17,14 @@ export default {
     if (!userData) {
       return interaction.reply("User not found");
     }
-    const athletes = userData.athletes.map((a) => a.name).join(", ");
-    return interaction.reply(`User: ${user.username}\nAthletes: ${athletes}`);
+    return interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle(`${user.username}'s profile`)
+          .setDescription(
+            `Name: ${userData.name}\nAthletic.net ID: ${userData.athleticid}\nRegistered at: ${userData.created_at}`
+          ),
+      ],
+    });
   },
 };
