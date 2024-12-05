@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import { createUser, db } from "../../db.js";
+import { createUser, getUserById } from "../../db.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -18,12 +18,10 @@ export default {
     const user = interaction.user;
     const name = interaction.options.getString("name");
     const athleticid = interaction.options.getString("athleticid");
-
-    const users = await db.run("SELECT * FROM user WHERE id = ?", [user.id]);
-    const userExists = users.length > 0;
+    const userExists = await getUserById(user.id);
 
     if (userExists) {
-      await interaction.reply(JSON.stringify(users));
+      await interaction.reply(JSON.stringify(userExists));
     } else {
       await createUser(user.id, athleticid, name);
       await interaction.reply("You have been registered successfully.");

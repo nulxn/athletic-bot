@@ -92,4 +92,19 @@ function getUserWithAthletes(id) {
   });
 }
 
-export { db, init, createUser, claimAthlete, getUserWithAthletes };
+function getUserById(id) {
+  const query = "SELECT * FROM user WHERE id = ?";
+  return new Promise((resolve, reject) => {
+    db.get(query, [id], (err, user) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+        return;
+      }
+
+      resolve(user);
+    });
+  });
+}
+
+export { db, init, createUser, claimAthlete, getUserWithAthletes, getUserById };
