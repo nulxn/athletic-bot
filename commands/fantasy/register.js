@@ -11,7 +11,7 @@ export default {
   async execute(interaction) {
     const user = interaction.user;
     const name = interaction.options.getString("name");
-    const users = await db.query("SELECT * FROM users");
+    const users = await db.run("SELECT * FROM users");
     const userExists = true;
 
     if (userExists) {
