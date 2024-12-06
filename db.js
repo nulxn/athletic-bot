@@ -107,4 +107,27 @@ function getUserById(id) {
   });
 }
 
-export { db, init, createUser, claimAthlete, getUserWithAthletes, getUserById };
+function getAllAthletes() {
+  const query = "SELECT * FROM athlete";
+  return new Promise((resolve, reject) => {
+    db.all(query, (err, athletes) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+        return;
+      }
+
+      resolve(athletes);
+    });
+  });
+}
+
+export {
+  db,
+  init,
+  createUser,
+  claimAthlete,
+  getUserWithAthletes,
+  getUserById,
+  getAllAthletes,
+};

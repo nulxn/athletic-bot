@@ -13,7 +13,12 @@ import {
   ActivityType,
 } from "discord.js";
 
-import { init } from "./db.js";
+import {
+  init,
+  getUserById,
+  getUserWithAthletes,
+  getAllAthletes,
+} from "./db.js";
 init();
 
 import dotenv from "dotenv";
@@ -110,6 +115,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 import express from "express";
 const app = express();
+
+const PORT = 3000;
+
+import { WebSocketServer } from "ws";
+import { get } from "http";
+const wss = new WebSocketServer({ port: PORT + 1 });
+
+let connectedIds = [];
+let connectedSockets = new Set();
+
 let guilds = [];
 
 client.once(Events.ClientReady, (readyUser) => {
@@ -120,14 +135,68 @@ client.once(Events.ClientReady, (readyUser) => {
   });
 
   readyUser.user.setPresence({
-    activities: [{ name: "/help", type: ActivityType.Listening }],
+    activities: [
+      { name: "nicholas scroll on reels", type: ActivityType.Watching },
+    ],
     status: "dnd",
   });
 
   const sitePath = path.join(__dirname, "site");
   app.use(express.static(sitePath));
 
-  const PORT = 3000;
+  app.get("/api/user/details", async (req, res) => {
+    res.json({ user: await getUserById(req.query.id) });
+  });
+
+  app.get("/api/user/athletes", async (req, res) => {
+    res.json({ user: await getUserWithAthletes(req.query.id) });
+  });
+
+  let currentlyDrafting = false;
+  let currentPicker = "1167471500366970950";
+
+  wss.on("connection", (ws) => {
+    connectedSockets.add(ws);
+
+    ws.on("close", () => {
+      connectedSockets.delete(ws);
+    });
+
+    ws.on("message", (message) => {
+      const messageStr = message.toString("utf8");
+      let data = JSON.parse(messageStr);
+      let type = data.type;
+
+      if (type === "draftPick") {
+        let athlete = data.pick;
+        let picker = data.picker;
+        let name = data.name;
+
+        if (picker !== currentPicker) {
+          ws.send(
+            JSON.stringify({
+              type: "error",
+              data: "It is not your turn to pick.",
+            })
+          );
+        } else {
+          connectedSockets.forEach((socket) => {
+            socket.send(
+              JSON.stringify({
+                type: "draftPickComplete",
+                data: { name, athlete },
+              })
+            );
+          });
+        }
+      } else if (type === "start") {
+        connectedIds.push(data.data);
+      }
+    });
+
+    ws.send(JSON.stringify({ type: "validPicks", data: getAllAthletes() }));
+  });
+
   app.listen(PORT, () => {
     console.log(`\nServer running at http://localhost:${PORT}`);
   });

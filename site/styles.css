@@ -27,3 +27,16 @@ header button {
   font-size: 1rem;
   padding: 5px;
 }
+
+footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  border-top: 1px solid var(--nord3);
+  align-items: end;
+}
+
+main {
+  height: 100%;
+}
