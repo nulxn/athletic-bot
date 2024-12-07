@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { getUserWithAthletes } from "../../db.js";
+import { getUserWithAthletes, footers } from "../../db.js";
+
 
 export default {
   data: new SlashCommandBuilder()
@@ -23,7 +24,17 @@ export default {
           .setTitle(`${user.username}'s profile`)
           .setDescription(
             `Name: ${userData.name}\nAthletic.net ID: ${userData.athleticid}\nRegistered at: ${userData.created_at}`
-          ),
+          )
+          .addFields(
+            userData.athletes.map((athlete) => ({
+              name: athlete.name,
+              value: `\`ID:\` ${athlete.id}\n\`PR:\` ${athlete.pr}\n\`School:\` ${athlete.school}`,
+              inline: true,
+            }))
+          )
+          .setFooter({
+            text: footers[Math.floor(Math.random() * footers.length)],
+          }),
       ],
     });
   },

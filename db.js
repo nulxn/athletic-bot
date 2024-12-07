@@ -149,6 +149,56 @@ function getMeetData(id) {
   });
 }
 
+function generateLeaderboard() {
+  const meetQuery = "SELECT * FROM meet";
+  return new Promise((resolve, reject) => {
+    db.all(meetQuery, (err, meets) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+        return;
+      }
+
+      let leaderboard = {};
+
+      meets.forEach((meet) => {
+        const participants = JSON.parse(meet.participants);
+        const athletes = JSON.parse(meet.athletes);
+        const meet_ids = JSON.parse(meet.meet_ids);
+        const winner = meet.winner;
+        participants.forEach((participant) => {
+          if (!leaderboard[participant]) {
+            leaderboard[participant] = {
+              wins: 0,
+              losses: 0,
+              athletes: athletes.filter((a) => a.owner_id === participant),
+            };
+          }
+
+          if (winner === participant) {
+            leaderboard[participant].wins++;
+          } else {
+            leaderboard[participant].losses++;
+          }
+
+          athletes.forEach((athlete) => {
+            if (meet_ids.includes(athlete.id)) {
+              leaderboard[participant].athletes.push(athlete);
+            }
+          });
+        });
+      });
+
+      resolve(leaderboard);
+    });
+  });
+}
+
+const footers = [
+  "Made with ❤️ by nolan",
+  '"Did you put it in?" - mark',
+  "And then rocco ran sub 15:00",
+];
 export {
   db,
   init,
@@ -158,4 +208,6 @@ export {
   getUserById,
   getAllAthletes,
   getMeetData,
+  generateLeaderboard,
+  footers,
 };

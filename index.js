@@ -18,6 +18,7 @@ import {
   getUserById,
   getUserWithAthletes,
   getAllAthletes,
+  footers
 } from "./db.js";
 init();
 
@@ -66,7 +67,7 @@ client.commands.set("help", {
             )
           )
           .setColor("#5865F2")
-          .setFooter({ text: "Made with ❤️ by nolan." })
+          .setFooter({ text: footers[Math.floor(Math.random() * footers.length)] })
           .setTimestamp(),
       ],
       ephemeral: true,
