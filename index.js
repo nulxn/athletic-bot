@@ -119,7 +119,6 @@ const app = express();
 const PORT = 3000;
 
 import { WebSocketServer } from "ws";
-import { get } from "http";
 const wss = new WebSocketServer({ port: PORT + 1 });
 
 let connectedIds = [];

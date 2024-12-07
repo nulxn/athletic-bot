@@ -31,6 +31,18 @@ function init() {
       FOREIGN KEY (owner_id) REFERENCES user(id)
     )
   `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS meet (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      participants TEXT,
+      winner TEXT,
+      athletes TEXT,
+      meet_ids TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 }
 
 function createUser(id, athleticid, name) {
@@ -122,6 +134,21 @@ function getAllAthletes() {
   });
 }
 
+function getMeetData(id) {
+  const query = "SELECT * FROM meet WHERE id = ?";
+  return new Promise((resolve, reject) => {
+    db.get(query, [id], (err, meet) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+        return;
+      }
+
+      resolve(meet);
+    });
+  });
+}
+
 export {
   db,
   init,
@@ -130,4 +157,5 @@ export {
   getUserWithAthletes,
   getUserById,
   getAllAthletes,
+  getMeetData,
 };

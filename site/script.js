@@ -11,7 +11,8 @@ function login() {
   popup.style.left = "50%";
   popup.style.transform = "translate(-50%, -50%)";
   popup.style.padding = "20px";
-  popup.style.backgroundColor = "var(--nord1)";
+  popup.style.backgroundColor = "var(--bg)";
+  popup.style.outline = "2px solid var(--border)";
   popup.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
   popup.style.zIndex = "1000";
 
@@ -71,7 +72,8 @@ function showProfile() {
   popup.style.left = "50%";
   popup.style.transform = "translate(-50%, -50%)";
   popup.style.padding = "20px";
-  popup.style.backgroundColor = "var(--nord1)";
+  popup.style.backgroundColor = "var(--bg)";
+  popup.style.outline = "2px solid var(--border)";
   popup.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
   popup.style.zIndex = "1000";
 
@@ -155,8 +157,6 @@ if (!localStorage.getItem("id")) {
     ws.send(
       JSON.stringify({ ...wsOptions, type: "draftPick", pick: "Lebron James" })
     );
-
-    
 
     console.log(userDetails);
   };

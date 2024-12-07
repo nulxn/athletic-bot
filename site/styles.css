@@ -1,6 +1,14 @@
+:root {
+  --bg: #282a36;
+  --border: #44475a;
+  --text: #f8f8f2;
+  --text-dk: #d4d4ce;
+  --accent: #50fa7b;
+}
+
 body {
-  background-color: var(--nord0);
-  color: var(--nord4);
+  background-color: var(--bg);
+  color: var(--text);
   display: flex;
   align-items: center;
   height: 100vh;
@@ -10,19 +18,23 @@ body {
   overflow: hidden;
 }
 
+* {
+  transition: all 0.3s;
+}
+
 header {
   width: 100%;
   display: flex;
   justify-content: center;
   padding: 1rem;
-  border-bottom: 1px solid var(--nord3);
+  border-bottom: 1px solid var(--border);
   align-items: start;
 }
 
 header button {
   background: none;
   border: none;
-  color: var(--nord11);
+  color: var(--accent);
   cursor: pointer;
   font-size: 1rem;
   padding: 5px;
@@ -33,10 +45,26 @@ footer {
   display: flex;
   justify-content: center;
   padding: 1rem;
-  border-top: 1px solid var(--nord3);
+  border-top: 1px solid var(--border);
   align-items: end;
 }
 
 main {
   height: 100%;
+}
+
+button {
+  background-color: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: var(--text-dk);
 }
