@@ -40,6 +40,10 @@ header button {
   padding: 5px;
 }
 
+header button:hover {
+  background-color: var(--bg);
+}
+
 footer {
   width: 100%;
   display: flex;
