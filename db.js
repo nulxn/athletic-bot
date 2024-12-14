@@ -39,7 +39,6 @@ function init() {
       participants TEXT,
       winner TEXT,
       athletes TEXT,
-      meet_ids TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -164,7 +163,6 @@ function generateLeaderboard() {
       meets.forEach((meet) => {
         const participants = JSON.parse(meet.participants);
         const athletes = JSON.parse(meet.athletes);
-        const meet_ids = JSON.parse(meet.meet_ids);
         const winner = meet.winner;
         participants.forEach((participant) => {
           if (!leaderboard[participant]) {
@@ -180,12 +178,6 @@ function generateLeaderboard() {
           } else {
             leaderboard[participant].losses++;
           }
-
-          athletes.forEach((athlete) => {
-            if (meet_ids.includes(athlete.id)) {
-              leaderboard[participant].athletes.push(athlete);
-            }
-          });
         });
       });
 
