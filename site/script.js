@@ -160,7 +160,10 @@ if (!localStorage.getItem("id")) {
     table.innerHTML = "";
 
     validPicks.forEach((athlete) => {
-      athlete.prs = JSON.parse(athlete.prs);
+      if (typeof athlete.prs === "string") {
+        athlete.prs = JSON.parse(athlete.prs);
+      }
+
       if (athlete.prs.length < 1) return;
       let row = document.createElement("tr");
 
@@ -208,6 +211,26 @@ if (!localStorage.getItem("id")) {
       row.appendChild(m1600);
       row.appendChild(m3200);
 
+      let claim = document.createElement("td");
+      if (picked.includes(athlete.name)) {
+        claim.textContent = "Claimed";
+        claim.style.color = "gray";
+      } else {
+        let button = document.createElement("button");
+        button.textContent = "Claim";
+        button.onclick = function () {
+          ws.send(
+            JSON.stringify({
+              ...wsOptions,
+              type: "draftPick",
+              pick: athlete.name,
+            })
+          );
+        };
+        claim.appendChild(button);
+      }
+      row.appendChild(claim);
+
       table.appendChild(row);
     });
   }
@@ -218,7 +241,8 @@ if (!localStorage.getItem("id")) {
 
     if (type === "draftPickComplete") {
       console.log(`${data.data.name} has picked ${data.data.athlete}`);
-      picked.push(data.data.athlete);
+      picked = data.data.picked;
+      populateTable();
     } else if (type === "validPicks") {
       validPicks = data.data;
       populateTable();

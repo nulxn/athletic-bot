@@ -65,10 +65,6 @@ function claimAthlete(id, owner_id) {
   stmt.run(owner_id, id, function (err) {
     if (err) {
       console.error(err.message);
-    } else {
-      console.log(
-        `Athlete with id ${id} has been claimed by user with id ${owner_id}`
-      );
     }
     stmt.finalize();
   });

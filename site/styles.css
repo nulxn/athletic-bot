@@ -55,6 +55,7 @@ footer {
 
 main {
   height: 100%;
+  flex: 1;
 }
 
 button {
@@ -70,5 +71,30 @@ button {
 }
 
 button:hover {
+  background-color: var(--text-dk);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+
+th {
+  background-color: var(--bg);
+  color: var(--accent);
+}
+
+tr:nth-child(even) {
+  background-color: var(--border);
+}
+
+tr:hover {
   background-color: var(--text-dk);
 }
