@@ -27,30 +27,33 @@ function runQuery(query, params = []) {
   });
 }
 
-async function createAthlete(athlete) {
-  const stmt = await db.prepare(
-    "INSERT INTO athlete (name, athletic, prs, school, grade, gender, icon, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-  );
-  await stmt.run(
-    athlete.Name,
-    athlete.ID,
-    JSON.stringify(athlete.prs?.filter((pr) => pr.event) ?? []),
-    athlete.team,
-    "9",
-    athlete.Gender,
-    athlete.icon,
-    null,
-    async function (err) {
-      if (err) {
-        await console.error(`\t Error: ${err.message}`);
-      } else {
-        await console.log(
-          `\tA row has been inserted with rowid ${this.lastID}`
-        );
+function createAthlete(athlete) {
+  return new Promise((resolve, reject) => {
+    const stmt = db.prepare(
+      "INSERT INTO athlete (name, athletic, prs, school, grade, gender, icon, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+
+    stmt.run(
+      athlete.Name,
+      athlete.ID,
+      JSON.stringify(athlete.prs?.filter((pr) => pr.event) ?? []),
+      athlete.team,
+      "9",
+      athlete.Gender,
+      athlete.icon,
+      null,
+      function (err) {
+        if (err) {
+          reject(`\tError: ${err.message}`);
+        } else {
+          console.log(`\tA row has been inserted with rowid ${this.lastID}`);
+          resolve(this);
+        }
       }
-      await stmt.finalize();
-    }
-  );
+    );
+
+    stmt.finalize();
+  });
 }
 
 async function createAthletes(athletes) {

@@ -163,6 +163,13 @@ if (!localStorage.getItem("id")) {
 
       let icon = document.createElement("td");
       icon.innerHTML = `<img src="${athlete.icon}" alt="${athlete.name}" style="width: 50px; height: 50px;">`;
+      let name = document.createElement("td");
+      name.textContent = athlete.name;
+
+      row.appendChild(icon);
+      row.appendChild(name);
+
+      table.appendChild(row);
     });
   }
 
