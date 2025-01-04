@@ -29,7 +29,7 @@ function runQuery(query, params = []) {
 
 async function createAthlete(athlete) {
   const stmt = await db.prepare(
-    "INSERT INTO athlete (name, athletic, prs, school, grade, gender, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    "INSERT INTO athlete (name, athletic, prs, school, grade, gender, icon, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
   );
   await stmt.run(
     athlete.Name,
@@ -38,12 +38,15 @@ async function createAthlete(athlete) {
     athlete.team,
     "9",
     athlete.Gender,
+    athlete.icon,
     null,
     async function (err) {
       if (err) {
         await console.error(`\t Error: ${err.message}`);
       } else {
-        await console.log(`\tA row has been inserted with rowid ${this.lastID}`);
+        await console.log(
+          `\tA row has been inserted with rowid ${this.lastID}`
+        );
       }
       await stmt.finalize();
     }
@@ -67,6 +70,7 @@ async function main() {
         school TEXT,
         grade TEXT,
         gender TEXT,
+        icon TEXT,
         owner_id INTEGER,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (owner_id) REFERENCES user(id)

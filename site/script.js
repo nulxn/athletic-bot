@@ -150,18 +150,31 @@ if (!localStorage.getItem("id")) {
     );
   };
 
+  let validPicks = [];
+  let picked = [];
+  let currentPicker = "";
+
+  let table = document.querySelector("#table");
+  function populateTable() {
+    table.innerHTML = "";
+
+    validPicks.forEach((athlete) => {
+      let row = document.createElement("tr");
+
+      let icon = document.createElement("td");
+      icon.innerHTML = `<img src="${athlete.icon}" alt="${athlete.name}" style="width: 50px; height: 50px;">`;
+    });
+  }
+
   ws.onmessage = function (message) {
     let data = JSON.parse(message.data);
     let type = data.type;
 
     if (type === "draftPickComplete") {
       console.log(`${data.data.name} has picked ${data.data.athlete}`);
+      picked.push(data.data.athlete);
+    } else if (type === "validPicks") {
+      validPicks = data.data;
     }
-  };
-
-  document.getElementById("bob").onclick = function () {
-    ws.send(
-      JSON.stringify({ ...wsOptions, type: "draftPick", pick: "Nolan Hightower" })
-    );
   };
 }
