@@ -161,7 +161,7 @@ if (!localStorage.getItem("id")) {
 
   document.getElementById("bob").onclick = function () {
     ws.send(
-      JSON.stringify({ ...wsOptions, type: "draftPick", pick: "Lebron James" })
+      JSON.stringify({ ...wsOptions, type: "draftPick", pick: "Nolan Hightower" })
     );
   };
 }

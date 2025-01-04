@@ -9,7 +9,7 @@ export default {
     const user = await getUserById(interaction.user.id);
     if (user) {
       await interaction.reply({
-        content: `**Go to the following url:** https://localhost:3000/auth?id=${interaction.user.id}`,
+        content: `**Go to the following url:** http://localhost:3000/auth?id=${interaction.user.id}`,
         ephemeral: true,
       });
     } else {

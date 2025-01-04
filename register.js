@@ -1,6 +1,6 @@
 console.clear();
 
-console.log("Command Registration Tool\n");
+console.log("\x1b[35m%s\x1b[0m", "Command Registration Tool\n");
 
 import fs from "fs";
 import path from "path";

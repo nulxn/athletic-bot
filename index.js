@@ -133,7 +133,7 @@ let picked = [];
 let guilds = [];
 
 client.once(Events.ClientReady, (readyUser) => {
-  console.log(`\nLogged in as ${client.user.tag}`);
+  console.log("\x1b[35m%s\x1b[0m", `\nLogged in as ${client.user.tag}`);
   client.guilds.cache.forEach((guild) => {
     console.log(`- ${guild.name}`);
     guilds.push(guild);
