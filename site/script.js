@@ -154,20 +154,59 @@ if (!localStorage.getItem("id")) {
   let picked = [];
   let currentPicker = "";
 
-  let table = document.querySelector("#table");
   function populateTable() {
+    let table = document.getElementById("table");
+    document.getElementById("picker").textContent = currentPicker;
     table.innerHTML = "";
 
     validPicks.forEach((athlete) => {
+      athlete.prs = JSON.parse(athlete.prs);
+      if (athlete.prs.length < 1) return;
       let row = document.createElement("tr");
 
       let icon = document.createElement("td");
       icon.innerHTML = `<img src="${athlete.icon}" alt="${athlete.name}" style="width: 50px; height: 50px;">`;
       let name = document.createElement("td");
       name.textContent = athlete.name;
+      let school = document.createElement("td");
+      school.textContent = athlete.school;
+      let gender = document.createElement("td");
+      gender.textContent = athlete.gender;
+
+      let m100 = document.createElement("td");
+      m100.textContent =
+        athlete.prs.find((pr) => pr.event === "100")?.time ?? "-";
+      let m200 = document.createElement("td");
+      m200.textContent =
+        athlete.prs.find((pr) => pr.event === "200")?.time ?? "-";
+      let m400 = document.createElement("td");
+      m400.textContent =
+        athlete.prs.find((pr) => pr.event === "400")?.time ?? "-";
+      let m800 = document.createElement("td");
+      m800.textContent =
+        athlete.prs.find((pr) => pr.event === "800")?.time ?? "-";
+      let m1500 = document.createElement("td");
+      m1500.textContent =
+        athlete.prs.find((pr) => pr.event === "1500")?.time ?? "-";
+      let m1600 = document.createElement("td");
+      m1600.textContent =
+        athlete.prs.find((pr) => pr.event === "1600")?.time ?? "-";
+      let m3200 = document.createElement("td");
+      m3200.textContent =
+        athlete.prs.find((pr) => pr.event === "3200")?.time ?? "-";
 
       row.appendChild(icon);
       row.appendChild(name);
+      row.appendChild(school);
+      row.appendChild(gender);
+
+      row.appendChild(m100);
+      row.appendChild(m200);
+      row.appendChild(m400);
+      row.appendChild(m800);
+      row.appendChild(m1500);
+      row.appendChild(m1600);
+      row.appendChild(m3200);
 
       table.appendChild(row);
     });
@@ -182,6 +221,7 @@ if (!localStorage.getItem("id")) {
       picked.push(data.data.athlete);
     } else if (type === "validPicks") {
       validPicks = data.data;
+      populateTable();
     }
   };
 }

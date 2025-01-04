@@ -160,7 +160,7 @@ client.once(Events.ClientReady, (readyUser) => {
   let currentlyDrafting = true;
   let currentPicker = "1167471500366970950";
 
-  wss.on("connection", (ws) => {
+  wss.on("connection", async (ws) => {
     connectedSockets.add(ws);
 
     ws.on("close", () => {
@@ -223,7 +223,7 @@ client.once(Events.ClientReady, (readyUser) => {
       }
     });
 
-    ws.send(JSON.stringify({ type: "validPicks", data: getAllAthletes() }));
+    ws.send(JSON.stringify({ type: "validPicks", data: await getAllAthletes() }));
   });
 
   app.listen(PORT, () => {
