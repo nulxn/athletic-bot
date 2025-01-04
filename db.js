@@ -25,7 +25,8 @@ function init() {
       athletic TEXT,
       prs TEXT,
       school TEXT,
-      grade TEXT,
+      grade TEXT,,
+      gender TEXT,
       owner_id INTEGER,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (owner_id) REFERENCES user(id)

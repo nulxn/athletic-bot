@@ -186,20 +186,29 @@ client.once(Events.ClientReady, (readyUser) => {
               })
             );
           } else {
-            picked.push({ name, athlete });
-            console.log(`${name} has picked ${athlete}`);
-            getAthleteByName(athlete).then((athlete) => {
-              claimAthlete(athlete.id, picker);
-            });
-
-            connectedSockets.forEach((socket) => {
-              socket.send(
+            if (picked.includes(athlete)) {
+              ws.send(
                 JSON.stringify({
-                  type: "draftPickComplete",
-                  data: { name, athlete, picked },
+                  type: "error",
+                  data: "This athlete has already been picked.",
                 })
               );
-            });
+            } else {
+              picked.push(athlete);
+              console.log(`${name} has picked ${athlete}`);
+              getAthleteByName(athlete).then((athlete) => {
+                claimAthlete(athlete.id, picker);
+              });
+
+              connectedSockets.forEach((socket) => {
+                socket.send(
+                  JSON.stringify({
+                    type: "draftPickComplete",
+                    data: { name, athlete, picked },
+                  })
+                );
+              });
+            }
           }
         } else {
           ws.send(
