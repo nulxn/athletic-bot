@@ -28,7 +28,7 @@ export default {
           .addFields(
             userData.athletes.map((athlete) => ({
               name: athlete.name,
-              value: `\`ID:\` ${athlete.id}\n\`PR:\` ${athlete.pr}\n\`School:\` ${athlete.school}`,
+              value: `\`ID:\` ${athlete.id}\n\`PR:\` ${athlete.prs}\n\`School:\` ${athlete.school}`,
               inline: true,
             }))
           )

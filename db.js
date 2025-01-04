@@ -133,6 +133,21 @@ function getAllAthletes() {
   });
 }
 
+function getAthleteByName(name) {
+  const query = "SELECT * FROM athlete WHERE name = ?";
+  return new Promise((resolve, reject) => {
+    db.get(query, [name], (err, athlete) => {
+      if (err) {
+        console.error(err.message);
+        reject(err);
+        return;
+      }
+
+      resolve(athlete);
+    });
+  });
+}
+
 function getMeetData(id) {
   const query = "SELECT * FROM meet WHERE id = ?";
   return new Promise((resolve, reject) => {
@@ -201,5 +216,6 @@ export {
   getAllAthletes,
   getMeetData,
   generateLeaderboard,
+  getAthleteByName,
   footers,
 };

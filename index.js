@@ -18,7 +18,9 @@ import {
   getUserById,
   getUserWithAthletes,
   getAllAthletes,
-  footers
+  footers,
+  claimAthlete,
+  getAthleteByName,
 } from "./db.js";
 init();
 
@@ -67,7 +69,9 @@ client.commands.set("help", {
             )
           )
           .setColor("#5865F2")
-          .setFooter({ text: footers[Math.floor(Math.random() * footers.length)] })
+          .setFooter({
+            text: footers[Math.floor(Math.random() * footers.length)],
+          })
           .setTimestamp(),
       ],
       ephemeral: true,
@@ -124,6 +128,7 @@ const wss = new WebSocketServer({ port: PORT + 1 });
 
 let connectedIds = [];
 let connectedSockets = new Set();
+let picked = [];
 
 let guilds = [];
 
@@ -152,7 +157,7 @@ client.once(Events.ClientReady, (readyUser) => {
     res.json({ user: await getUserWithAthletes(req.query.id) });
   });
 
-  let currentlyDrafting = false;
+  let currentlyDrafting = true;
   let currentPicker = "1167471500366970950";
 
   wss.on("connection", (ws) => {
@@ -168,26 +173,41 @@ client.once(Events.ClientReady, (readyUser) => {
       let type = data.type;
 
       if (type === "draftPick") {
-        let athlete = data.pick;
-        let picker = data.picker;
-        let name = data.name;
+        if (currentlyDrafting) {
+          let athlete = data.pick;
+          let picker = data.picker;
+          let name = data.name;
 
-        if (picker !== currentPicker) {
+          if (picker !== currentPicker) {
+            ws.send(
+              JSON.stringify({
+                type: "error",
+                data: "It is not your turn to pick.",
+              })
+            );
+          } else {
+            picked.push({ name, athlete });
+            console.log(`${name} has picked ${athlete}`);
+            getAthleteByName(athlete).then((athlete) => {
+              claimAthlete(athlete.id, picker);
+            });
+
+            connectedSockets.forEach((socket) => {
+              socket.send(
+                JSON.stringify({
+                  type: "draftPickComplete",
+                  data: { name, athlete, picked },
+                })
+              );
+            });
+          }
+        } else {
           ws.send(
             JSON.stringify({
               type: "error",
-              data: "It is not your turn to pick.",
+              data: "The draft has not started yet.",
             })
           );
-        } else {
-          connectedSockets.forEach((socket) => {
-            socket.send(
-              JSON.stringify({
-                type: "draftPickComplete",
-                data: { name, athlete },
-              })
-            );
-          });
         }
       } else if (type === "start") {
         connectedIds.push(data.data);

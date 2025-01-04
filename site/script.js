@@ -128,15 +128,21 @@ if (!localStorage.getItem("id")) {
     .then((data) => {
       userDetails = data.user;
       wsOptions.name = data.user.name;
+      console.log("/details", data);
     });
 
   fetch("/api/user/athletes?id=" + localStorage.getItem("id"))
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
+      console.log("/athletes", data);
     });
 
-  const ws = new WebSocket("ws://localhost:3001");
+  const ws = new WebSocket(
+    window.location.href
+      .replace("https", "wss")
+      .replace("http", "ws")
+      .replace("3000", "3001")
+  );
 
   ws.onopen = function () {
     ws.send(
@@ -157,7 +163,5 @@ if (!localStorage.getItem("id")) {
     ws.send(
       JSON.stringify({ ...wsOptions, type: "draftPick", pick: "Lebron James" })
     );
-
-    console.log(userDetails);
   };
 }
