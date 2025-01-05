@@ -1,5 +1,15 @@
 console.clear();
 
+let notyf = new Notyf();
+const nopts = {
+  dismissible: true,
+  ripple: true,
+  position: {
+    x: "right",
+    y: "bottom",
+  },
+};
+
 function login() {
   // Create popup elements
   const popup = document.createElement("div");
@@ -152,6 +162,7 @@ if (!localStorage.getItem("id")) {
 
   let validPicks = [];
   let picked = [];
+  let connectedUsers = [];
   let currentPicker = "";
 
   function populateTable() {
@@ -214,7 +225,7 @@ if (!localStorage.getItem("id")) {
       let claim = document.createElement("td");
       if (picked.includes(athlete.name)) {
         claim.textContent = "Claimed";
-        claim.style.color = "gray";
+        claim.style.color = "var(--text-dk)";
       } else {
         let button = document.createElement("button");
         button.textContent = "Claim";
@@ -244,11 +255,22 @@ if (!localStorage.getItem("id")) {
 
     if (type === "draftPickComplete") {
       console.log(`${data.data.name} has picked ${data.data.athlete}`);
+      console.log(`\t${data.data.next} picks next`);
       picked = data.data.picked;
+      currentPicker = data.data.next;
       populateTable();
     } else if (type === "validPicks") {
       validPicks = data.data;
       populateTable();
+    } else if (type === "userJoin") {
+      connectedUsers = data.data;
+    } else if (type === "draftFinished") {
+      console.log("Draft Finished!");
+    } else if (type === "error") {
+      notyf.error({
+        ...nopts,
+        message: data.data,
+      });
     }
   };
 }

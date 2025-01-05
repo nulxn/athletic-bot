@@ -159,9 +159,31 @@ client.once(Events.ClientReady, (readyUser) => {
 
   let currentlyDrafting = true;
   let currentPicker = "1167471500366970950";
+  let round = 0;
+
+  function findNextPicker() {
+    let currentIndex = connectedIds.indexOf(currentPicker);
+    if (currentIndex === -1) return;
+
+    if (currentIndex === connectedIds.length - 1) {
+      connectedIds.reverse();
+      round++;
+    }
+
+    currentIndex = connectedIds.indexOf(currentPicker);
+    return connectedIds[(currentIndex + 1) % connectedIds.length];
+  }
 
   wss.on("connection", async (ws) => {
     connectedSockets.add(ws);
+    connectedSockets.forEach((socket) => {
+      socket.send(
+        JSON.stringify({
+          type: "userJoin",
+          data: connectedIds,
+        })
+      );
+    });
 
     ws.on("close", () => {
       connectedSockets.delete(ws);
@@ -200,14 +222,28 @@ client.once(Events.ClientReady, (readyUser) => {
                 claimAthlete(athlete.id, picker);
               });
 
-              connectedSockets.forEach((socket) => {
-                socket.send(
-                  JSON.stringify({
-                    type: "draftPickComplete",
-                    data: { name, athlete, picked },
-                  })
-                );
+              getUserById(findNextPicker()).then((us) => {
+                connectedSockets.forEach((socket) => {
+                  socket.send(
+                    JSON.stringify({
+                      type: "draftPickComplete",
+                      data: { name, athlete, picked, next: us.name },
+                    })
+                  );
+                });
               });
+
+              currentPicker = findNextPicker();
+              if (round > 7) {
+                connectedSockets.forEach((socket) => {
+                  socket.send(
+                    JSON.stringify({
+                      type: "draftFinished",
+                      data: {},
+                    })
+                  );
+                });
+              }
             }
           }
         } else {
@@ -223,7 +259,9 @@ client.once(Events.ClientReady, (readyUser) => {
       }
     });
 
-    ws.send(JSON.stringify({ type: "validPicks", data: await getAllAthletes() }));
+    ws.send(
+      JSON.stringify({ type: "validPicks", data: await getAllAthletes() })
+    );
   });
 
   app.listen(PORT, () => {

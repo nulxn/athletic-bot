@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
+    />
     <title>runner website</title>
   </head>
   <body>
@@ -43,7 +47,8 @@
       <p>footer</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script defer src="script.js"></script>
     <script>
       // table functions
       let currentPage = 1;
@@ -130,6 +135,11 @@
 
       function createPagination() {
         const table = document.querySelector("table");
+
+        if (document.getElementById("pagination")) {
+          document.getElementById("pagination").remove();
+        }
+
         const pagination = document.createElement("div");
 
         pagination.style.margin = "auto";
