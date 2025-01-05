@@ -46,7 +46,8 @@
     <script src="script.js"></script>
     <script>
       // table functions
-      
+      let currentPage = 1;
+
       document.querySelectorAll("th").forEach((th) => {
         if (th.hasAttribute("onclick")) {
           th.style.cursor = "pointer";
@@ -111,9 +112,10 @@
           const [minutes, seconds] = parts;
           return minutes * 60 + seconds;
         }
+
+        displayTablePage(1);
       }
       const rowsPerPage = 15;
-      let currentPage = 1;
 
       function displayTablePage(page) {
         const tableBody = document.querySelector("#table");
