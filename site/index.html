@@ -6,14 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <title>runner website</title>
-    <style>
-      #logo {
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    </style>
   </head>
   <body>
     <header>
@@ -23,25 +15,27 @@
       <h1>Draft Page</h1>
       <p>Current Picker: <span id="picker">loading</span></p>
 
+      <div style="text-align: center">
+        <p><strong>Click an event to sort!</strong></p>
+      </div>
       <table>
         <thead>
           <tr>
             <th>Icon</th>
-            <th>Name</th>
+            <th onclick="sort(0)">Name</th>
             <th>School</th>
             <th>Gender</th>
-            <th>100m</th>
-            <th>200m</th>
-            <th>400m</th>
-            <th>800m</th>
-            <th>1500m</th>
-            <th>1600m</th>
-            <th>3200m</th>
+            <th onclick="sort(100)">100m</th>
+            <th onclick="sort(200)">200m</th>
+            <th onclick="sort(400)">400m</th>
+            <th onclick="sort(800)">800m</th>
+            <th onclick="sort(1500)">1500m</th>
+            <th onclick="sort(1600)">1600m</th>
+            <th onclick="sort(3200)">3200m</th>
             <th>Claim</th>
           </tr>
         </thead>
-        <tbody id="table">
-        </tbody>
+        <tbody id="table"></tbody>
       </table>
     </main>
 
@@ -50,6 +44,117 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+      // table functions
+      
+      document.querySelectorAll("th").forEach((th) => {
+        if (th.hasAttribute("onclick")) {
+          th.style.cursor = "pointer";
+        }
+      });
+      function sort(event) {
+        console.log("sorting by", event);
+
+        if (event === 0) {
+          const rows = Array.from(document.querySelector("#table").rows);
+          rows.sort((a, b) => {
+            const nameA = a.cells[1].textContent.trim().toLowerCase();
+            const nameB = b.cells[1].textContent.trim().toLowerCase();
+            return nameA.localeCompare(nameB);
+          });
+          rows.forEach((row) =>
+            document.querySelector("#table").appendChild(row)
+          );
+        }
+
+        const tableBody = document.querySelector("#table");
+        const rows = Array.from(tableBody.rows);
+
+        const eventToColumn = {
+          100: 4,
+          200: 5,
+          400: 6,
+          800: 7,
+          1500: 8,
+          1600: 9,
+          3200: 10,
+        };
+
+        rows.sort((a, b) => {
+          const timeA = parseTime(
+            a.cells[eventToColumn[event]]?.textContent || "-"
+          );
+          const timeB = parseTime(
+            b.cells[eventToColumn[event]]?.textContent || "-"
+          );
+          return timeA - timeB;
+        });
+
+        rows.forEach((row) => tableBody.appendChild(row));
+
+        function parseTime(timeString) {
+          if (timeString === "-") return Infinity;
+          if (
+            timeString === "4.49a" ||
+            timeString === "5.17a" ||
+            timeString === "5.47a"
+          )
+            timeString = timeString.replace(".", ":");
+          const parts = timeString
+            .replaceAll("a", "")
+            .replaceAll("f", "")
+            .split(":")
+            .map(Number);
+          if (parts.length === 1) {
+            return parts[0];
+          }
+          const [minutes, seconds] = parts;
+          return minutes * 60 + seconds;
+        }
+      }
+      const rowsPerPage = 15;
+      let currentPage = 1;
+
+      function displayTablePage(page) {
+        const tableBody = document.querySelector("#table");
+        const rows = Array.from(tableBody.rows);
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+          row.style.display = index >= start && index < end ? "" : "none";
+        });
+      }
+
+      function createPagination() {
+        const table = document.querySelector("table");
+        const pagination = document.createElement("div");
+
+        pagination.style.margin = "auto";
+        pagination.style.width = table.offsetWidth + "px";
+
+        pagination.id = "pagination";
+        table.parentNode.insertBefore(pagination, table.nextSibling);
+
+        const tableBody = document.querySelector("#table");
+        const rows = Array.from(tableBody.rows);
+        const pageCount = Math.ceil(rows.length / rowsPerPage);
+
+        for (let i = 1; i <= pageCount; i++) {
+          const pageButton = document.createElement("button");
+          pageButton.textContent = i;
+          pageButton.addEventListener("click", () => {
+            currentPage = i;
+            displayTablePage(currentPage);
+          });
+          pagination.appendChild(pageButton);
+        }
+      }
+
+      document.addEventListener("tableUpdate", () => {
+        createPagination();
+        displayTablePage(currentPage);
+      });
     </script>
   </body>
 </html>

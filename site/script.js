@@ -233,6 +233,9 @@ if (!localStorage.getItem("id")) {
 
       table.appendChild(row);
     });
+
+    const event = new Event("tableUpdate");
+    document.dispatchEvent(event);
   }
 
   ws.onmessage = function (message) {
