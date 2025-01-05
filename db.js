@@ -58,6 +58,18 @@ function createUser(id, athleticid, name) {
     }
     stmt.finalize();
   });
+
+  const query = "SELECT * FROM athlete WHERE athletic = ?";
+  db.get(query, [athleticid], (err, athlete) => {
+    if (err) {
+      console.error(err.message);
+      return;
+    } else {
+      if (athlete) {
+        claimAthlete(athlete.id, id);
+      }
+    }
+  });
 }
 
 function claimAthlete(id, owner_id) {
