@@ -1,7 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { getUserWithAthletes, footers } from "../../db.js";
 
-
 export default {
   data: new SlashCommandBuilder()
     .setName("user")
@@ -28,7 +27,11 @@ export default {
           .addFields(
             userData.athletes.map((athlete) => ({
               name: athlete.name,
-              value: `\`ID:\` ${athlete.id}\n\`PR:\` ${athlete.prs}\n\`School:\` ${athlete.school}`,
+              value: `\`ID:\` ${athlete.id}\n\`PRs:\` ${JSON.parse(
+                athlete.prs
+              ).map((pr) => `${pr.event}m: ${pr.time}\n`)}\`School:\` ${
+                athlete.school
+              }`,
               inline: true,
             }))
           )

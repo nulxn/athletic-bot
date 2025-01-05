@@ -4,6 +4,7 @@ let notyf = new Notyf();
 const nopts = {
   dismissible: true,
   ripple: true,
+  duration: 3000,
   position: {
     x: "right",
     y: "bottom",
@@ -164,10 +165,12 @@ if (!localStorage.getItem("id")) {
   let picked = [];
   let connectedUsers = [];
   let currentPicker = "";
+  let round = 5;
 
   function populateTable() {
     let table = document.getElementById("table");
     document.getElementById("picker").textContent = currentPicker;
+    document.getElementById("round").textContent = round;
     table.innerHTML = "";
 
     validPicks.forEach((athlete) => {
@@ -247,6 +250,11 @@ if (!localStorage.getItem("id")) {
 
     const event = new Event("tableUpdate");
     document.dispatchEvent(event);
+    if (round > 7) {
+      document.querySelector("table").innerHTML =
+        "<div><h2>The Draft Is Complete!</h2><p>Use <code>/user</code> to see your picks.</p></div>";
+      document.getElementById("pagination").innerHTML = "";
+    }
   }
 
   ws.onmessage = function (message) {
@@ -258,14 +266,24 @@ if (!localStorage.getItem("id")) {
       console.log(`\t${data.data.next} picks next`);
       picked = data.data.picked;
       currentPicker = data.data.next;
+      console.log(data.data);
+      round = data.data.round;
       populateTable();
     } else if (type === "validPicks") {
       validPicks = data.data;
+      round = data.round;
       populateTable();
     } else if (type === "userJoin") {
       connectedUsers = data.data;
     } else if (type === "draftFinished") {
-      console.log("Draft Finished!");
+      notyf.success({
+        ...nopts,
+        message: "The draft is complete!",
+      });
+
+      document.querySelector("table").innerHTML =
+        "<div><h2>The Draft Is Complete!</h2><p>Use <code>/user</code> to see your picks.</p></div>";
+      document.getElementById("pagination").innerHTML = "";
     } else if (type === "error") {
       notyf.error({
         ...nopts,

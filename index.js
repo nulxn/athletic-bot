@@ -200,7 +200,7 @@ client.once(Events.ClientReady, (readyUser) => {
           let picker = data.picker;
           let name = data.name;
 
-          if (picker !== currentPicker) {
+          if (picker !== currentPicker || round > 7) {
             ws.send(
               JSON.stringify({
                 type: "error",
@@ -227,7 +227,7 @@ client.once(Events.ClientReady, (readyUser) => {
                   socket.send(
                     JSON.stringify({
                       type: "draftPickComplete",
-                      data: { name, athlete, picked, next: us.name },
+                      data: { name, athlete, picked, next: us.name, round },
                     })
                   );
                 });
@@ -260,7 +260,11 @@ client.once(Events.ClientReady, (readyUser) => {
     });
 
     ws.send(
-      JSON.stringify({ type: "validPicks", data: await getAllAthletes() })
+      JSON.stringify({
+        type: "validPicks",
+        data: await getAllAthletes(),
+        round,
+      })
     );
   });
 
