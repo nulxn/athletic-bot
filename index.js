@@ -158,32 +158,30 @@ client.once(Events.ClientReady, (readyUser) => {
   });
 
   let currentlyDrafting = true;
-  let currentPicker = "1167471500366970950";
+  let currentPicker = "1";
   let round = 0;
 
   function findNextPicker() {
+    console.log("IT IS ROUND", round);
     let currentIndex = connectedIds.indexOf(currentPicker);
-    if (currentIndex === -1) return;
-
-    if (currentIndex === connectedIds.length - 1) {
-      connectedIds.reverse();
-      round++;
+    if (round % 2 === 0) {
+      currentIndex++;
+      if (currentIndex >= connectedIds.length) {
+        currentIndex = connectedIds.length - 1;
+        round++;
+      }
+    } else {
+      currentIndex--;
+      if (currentIndex < 0) {
+        currentIndex = 0;
+        round++;
+      }
     }
-
-    currentIndex = connectedIds.indexOf(currentPicker);
-    return connectedIds[(currentIndex + 1) % connectedIds.length];
+    return connectedIds[currentIndex];
   }
 
   wss.on("connection", async (ws) => {
     connectedSockets.add(ws);
-    connectedSockets.forEach((socket) => {
-      socket.send(
-        JSON.stringify({
-          type: "userJoin",
-          data: connectedIds,
-        })
-      );
-    });
 
     ws.on("close", () => {
       connectedSockets.delete(ws);
@@ -222,7 +220,25 @@ client.once(Events.ClientReady, (readyUser) => {
                 claimAthlete(athlete.id, picker);
               });
 
-              getUserById(findNextPicker()).then((us) => {
+              let nextPicker = findNextPicker();
+              currentPicker = nextPicker;
+              getUserById(nextPicker).then((us) => {
+                if (!us)
+                  return ws.send(
+                    JSON.stringify({
+                      type: "error",
+                      data: "No user found.",
+                    })
+                  );
+
+                if (!us.name)
+                  return ws.send(
+                    JSON.stringify({
+                      type: "error",
+                      data: "No name found.",
+                    })
+                  );
+
                 connectedSockets.forEach((socket) => {
                   socket.send(
                     JSON.stringify({
@@ -233,7 +249,6 @@ client.once(Events.ClientReady, (readyUser) => {
                 });
               });
 
-              currentPicker = findNextPicker();
               if (round > 7) {
                 connectedSockets.forEach((socket) => {
                   socket.send(
@@ -263,9 +278,19 @@ client.once(Events.ClientReady, (readyUser) => {
       JSON.stringify({
         type: "validPicks",
         data: await getAllAthletes(),
+        picked,
         round,
       })
     );
+
+    connectedSockets.forEach((socket) => {
+      socket.send(
+        JSON.stringify({
+          type: "userJoin",
+          data: connectedIds,
+        })
+      );
+    });
   });
 
   app.listen(PORT, () => {

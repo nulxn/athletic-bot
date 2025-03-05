@@ -31,10 +31,11 @@ async function getUsers() {
 async function populateUsers() {
   await createUser("1", "123", "nolan");
   await createUser("2", "456", "rocco");
+  await createUser("3", "789", "drew");
 }
 
 async function main() {
-  //await populateUsers();
+  await populateUsers();
   const users = await getUsers();
 
   console.log(users);

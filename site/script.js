@@ -271,6 +271,7 @@ if (!localStorage.getItem("id")) {
       populateTable();
     } else if (type === "validPicks") {
       validPicks = data.data;
+      picked = data.picked;
       round = data.round;
       populateTable();
     } else if (type === "userJoin") {
